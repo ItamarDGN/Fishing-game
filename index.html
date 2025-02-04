@@ -13,6 +13,22 @@
       img {
         margin-left: 0;
       }
+
+      canvas {
+        border: 1px solid black;
+      }
+
+      .main-container {
+        text-align: center;
+      }
+
+      .game-area {
+        margin-top: 20px;
+      }
+
+      header {
+        margin-bottom: 20px;
+      }
     </style>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -20,6 +36,28 @@
     <div class="main-container">
       <header>
         <h1>The Fisherman's Adventure</h1>
+        <div class="image-container">
+          <img
+            src="assets/pixel_art/4 Icons/Icons_09.png"
+            alt="blue fish"
+            class="side-left-image"
+          />
+          <img
+            src="assets/pixel_art/4 Icons/Icons_05.png"
+            alt="green fish"
+            class="side-right-image"
+          />
+        </div>
+        <p>
+          Take on an Adventure as a poor fisherman as you slowly build your
+          empire! <br />
+          Buy new upgrades, catch new fish, and <br />
+          Become the best FISHERMAN ON THE OCEAN!!
+        </p>
+        <p>
+          W,A,S,D to move <br />
+          F to fish E to enter
+        </p>
         <div class="image-container">
           <img
             src="assets/pixel_art/4 Icons/Icons_01.png"
@@ -32,19 +70,10 @@
             class="side-left-image"
           />
         </div>
-
-        <p>
-          Take on an Adventure as a poor fisherman as you slowly build your
-          empire! <br />
-          Buy new fishing rods, boats, and even hire workers to help you fish!
-          <br />
-          <br />
-          Become the best FISHERMAN ON THE OCEAN!!
-        </p>
       </header>
 
       <div class="game-area">
-        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <canvas id="gameCanvas" width="1200" height="900"></canvas>
       </div>
 
       <footer>
