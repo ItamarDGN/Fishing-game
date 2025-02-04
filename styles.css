@@ -1,0 +1,91 @@
+@font-face {
+    font-family: 'MyCustomFont';
+    src: url('./assets/pixel_art/Pixellari.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'MyCustomFont', sans-serif; 
+}
+
+body {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.main-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background: #2b2b2b;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+header {
+    background: #333;
+    color: #f2f2f2;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+}
+
+header p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+.game-area {
+    background: #111;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+    margin-top: 20px;
+}
+
+canvas {
+    border-radius: 8px;
+    background-color: #2c2c2c;
+    border: 2px solid #444;
+}
+
+footer {
+    font-size: 1rem;
+    color: #ccc;
+    background-color: #333;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+footer p {
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+.image-container {
+    display: flex;
+    justify-content: space-between; /* Ensures images are on each side */
+    align-items: center; /* Aligns them vertically centered */
+  }
+  
+  .side-left-image {
+    width: 64px; /* Set a width for the images */
+    height: auto; /* Maintain aspect ratio */
+  }
+  .side-right-image {
+    width: 64px; /* Set a width for the images */
+    height: auto; /* Maintain aspect ratio */
+    transform: scaleX(-1);
+  }
