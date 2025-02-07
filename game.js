@@ -1,3 +1,48 @@
+//canvas and context
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+function newImage(src) {
+  const img = new Image();
+  img.src = src;
+  return img;
+}
+
+// imgs source
+const assetsPath = "./assets/pixel_art/";
+const characterIdle = newImage(assetsPath + "/1 Fisherman/Fisherman_idle.png");
+const characterWalk = newImage(assetsPath + "/1 Fisherman/Fisherman_walk.png");
+const characterAttack = newImage(
+  assetsPath + "/1 Fisherman/Fisherman_attack.png"
+);
+const characterDeath = newImage(
+  assetsPath + "/1 Fisherman/Fisherman_death.png"
+);
+const characterHurt = newImage(assetsPath + "/1 Fisherman/Fisherman_hurt.png");
+const characterFishing = newImage(
+  assetsPath + "/1 Fisherman/Fisherman_fish.png"
+);
+const characterRow = newImage(assetsPath + "/1 Fisherman/Fisherman_row.png");
+const characterHook = newImage(assetsPath + "/1 Fisherman/Fisherman_hook.png");
+const Boat = newImage(assetsPath + "/3 Objects/Boat.png");
+const FishingDock = newImage(assetsPath + "/3 Objects/Fishing_hut.png");
+const watersheet = newImage(assetsPath + "/3 Objects/Water.png");
+const piersheet = newImage(assetsPath + "/3 Objects/Pier_Tiles.png");
+const grass1 = newImage(assetsPath + "/3 Objects/Grass1.png");
+const grass2 = newImage(assetsPath + "/3 Objects/Grass2.png");
+const grass3 = newImage(assetsPath + "/3 Objects/Grass3.png");
+const grass4 = newImage(assetsPath + "/3 Objects/Grass4.png");
+const fishbarrel1 = newImage(assetsPath + "/3 Objects/Fishbarrel1.png");
+const fishbarrel2 = newImage(assetsPath + "/3 Objects/Fishbarrel2.png");
+const fishbarrel3 = newImage(assetsPath + "/3 Objects/Fishbarrel3.png");
+const fishbarrel4 = newImage(assetsPath + "/3 Objects/Fishbarrel4.png");
+const fishbarrel5 = newImage(assetsPath + "/4 Icons/Icons_16.png");
+const fishbarrel6 = newImage(assetsPath + "/4 Icons/Icons_19.png");
+const woodbarrel = newImage(assetsPath + "/4 Icons/Icons_20.png");
+const metalbarrel = newImage(assetsPath + "/4 Icons/Icons_17.png");
+const boatVertical = newImage(assetsPath + "/3 Objects/Boat2.png");
+const fence = newImage(assetsPath + "/3 Objects/Stay.png");
+
 // Game state variables
 let isOnBoat = false;
 let isRowing = false;
@@ -52,51 +97,6 @@ const camera = {
   width: canvas.width,
   height: canvas.height,
 };
-
-//canvas and context
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-
-function newImage(src) {
-  const img = new Image();
-  img.src = src;
-  return img;
-}
-
-// imgs source
-const assetsPath = "./assets/pixel_art/";
-const characterIdle = newImage(assetsPath + "/1 Fisherman/Fisherman_idle.png");
-const characterWalk = newImage(assetsPath + "/1 Fisherman/Fisherman_walk.png");
-const characterAttack = newImage(
-  assetsPath + "/1 Fisherman/Fisherman_attack.png"
-);
-const characterDeath = newImage(
-  assetsPath + "/1 Fisherman/Fisherman_death.png"
-);
-const characterHurt = newImage(assetsPath + "/1 Fisherman/Fisherman_hurt.png");
-const characterFishing = newImage(
-  assetsPath + "/1 Fisherman/Fisherman_fish.png"
-);
-const characterRow = newImage(assetsPath + "/1 Fisherman/Fisherman_row.png");
-const characterHook = newImage(assetsPath + "/1 Fisherman/Fisherman_hook.png");
-const Boat = newImage(assetsPath + "/3 Objects/Boat.png");
-const FishingDock = newImage(assetsPath + "/3 Objects/Fishing_hut.png");
-const watersheet = newImage(assetsPath + "/3 Objects/Water.png");
-const piersheet = newImage(assetsPath + "/3 Objects/Pier_Tiles.png");
-const grass1 = newImage(assetsPath + "/3 Objects/Grass1.png");
-const grass2 = newImage(assetsPath + "/3 Objects/Grass2.png");
-const grass3 = newImage(assetsPath + "/3 Objects/Grass3.png");
-const grass4 = newImage(assetsPath + "/3 Objects/Grass4.png");
-const fishbarrel1 = newImage(assetsPath + "/3 Objects/Fishbarrel1.png");
-const fishbarrel2 = newImage(assetsPath + "/3 Objects/Fishbarrel2.png");
-const fishbarrel3 = newImage(assetsPath + "/3 Objects/Fishbarrel3.png");
-const fishbarrel4 = newImage(assetsPath + "/3 Objects/Fishbarrel4.png");
-const fishbarrel5 = newImage(assetsPath + "/4 Icons/Icons_16.png");
-const fishbarrel6 = newImage(assetsPath + "/4 Icons/Icons_19.png");
-const woodbarrel = newImage(assetsPath + "/4 Icons/Icons_20.png");
-const metalbarrel = newImage(assetsPath + "/4 Icons/Icons_17.png");
-const boatVertical = newImage(assetsPath + "/3 Objects/Boat2.png");
-const fence = newImage(assetsPath + "/3 Objects/Stay.png");
 
 // Create random map
 const map = Array.from({ length: 50 }, () =>
