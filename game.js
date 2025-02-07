@@ -1,74 +1,39 @@
-// Set up the canvas and context
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
-// Load the sprites 
-const characterIdle = new Image();
-const characterWalk = new Image();
-const characterAttack = new Image();
-const characterDeath = new Image();
-const characterHurt = new Image();
-const characterFishing = new Image();
-const characterRow = new Image();
-const characterHook = new Image();
-const Boat = new Image();
-const FishingDock = new Image();
-
-
-// Set the source for the images
-characterIdle.src = './assets/pixel_art/1 Fisherman/Fisherman_idle.png';
-characterWalk.src = './assets/pixel_art/1 Fisherman/Fisherman_walk.png';
-characterAttack.src = './assets/pixel_art/1 Fisherman/Fisherman_attack.png';
-characterDeath.src = './assets/pixel_art/1 Fisherman/Fisherman_death.png';
-characterHurt.src = './assets/pixel_art/1 Fisherman/Fisherman_hurt.png';
-characterFishing.src = './assets/pixel_art/1 Fisherman/Fisherman_fish.png';
-characterRow.src = './assets/pixel_art/1 Fisherman/Fisherman_row.png';
-characterHook.src = './assets/pixel_art/1 Fisherman/Fisherman_hook.png';
-Boat.src = './assets/pixel_art/3 Objects/Boat.png';
-FishingDock.src = './assets/pixel_art/3 Objects/Fishing_hut.png';
-
-// Start the game loop once all images are loaded
-let imagesLoaded = 0;
-const totalImages = 10;
-function checkImagesLoaded() {
-  imagesLoaded++;
-  console.log(`Images loaded: ${imagesLoaded}/${totalImages}`);
-  if (imagesLoaded === totalImages) {
-    gameLoop(); 
-  }
-}
-
-// Add onload event for each image
-characterIdle.onload = checkImagesLoaded;
-characterWalk.onload = checkImagesLoaded;
-characterAttack.onload = checkImagesLoaded;
-characterDeath.onload = checkImagesLoaded;
-characterHurt.onload = checkImagesLoaded;
-characterFishing.onload = checkImagesLoaded;
-characterRow.onload = checkImagesLoaded;
-characterHook.onload = checkImagesLoaded;
-Boat.onload = checkImagesLoaded;
-FishingDock.onload = checkImagesLoaded;
-
-// Keyboard input tracking
-let keys = {};
-document.addEventListener('keydown', (event) => { keys[event.key] = true; });
-document.addEventListener('keyup', (event) => { keys[event.key] = false; });
-
 // Game state variables
 let isOnBoat = false;
-let isFishing = false; 
 let isRowing = false;
-let characterAction = 'idle';
-let characterMovementLocked = false; 
-let characterFacingDirection = 1; 
+let characterAction = "idle";
+let characterMovementLocked = false;
+let characterFacingDirection = 1;
 
 // Frame variables for animations
 let currentFrame = 0;
-let frameSpeed = 14; 
+let frameSpeed = 14;
 let frameCounter = 0;
 
-// Character definition 
+// Map tile sizes and dimensions
+const tileSize = 32;
+const mapWidth = 50;
+const mapHeight = 50;
+
+// Boat definition
+let boat = {
+  x: 30,
+  y: canvas.height / 1.2,
+  width: 100,
+  height: 35,
+  image: Boat,
+};
+
+// Dock definition
+let dock = {
+  x: canvas.width - 185,
+  y: canvas.height / 1.32,
+  width: 150 * 1.2,
+  height: 100 * 1.2,
+  image: FishingDock,
+};
+
+// Character definition
 let character = {
   x: canvas.width / 2,
   y: canvas.height / 2,
@@ -80,142 +45,201 @@ let character = {
   currentFrame: 0,
 };
 
-// Boat definition
-let boat = {
-  x: 30,
-  y: canvas.height / 1.1,
-  width: 100,
-  height: 50,
-  image: Boat,
+// Camera settings
+const camera = {
+  x: 0,
+  y: 0,
+  width: canvas.width,
+  height: canvas.height,
 };
 
-// Dock definition
-let dock = {
-  x: canvas.width - 185,
-  y: canvas.height / 1.2,
-  width: 150*1.2,
-  height: 100*1.2,
-  image: FishingDock,
-};
+//canvas and context
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-// flag to prevent continuous toggling of fishing state
-let fishingKeyPressed = false; 
+function newImage(src) {
+  const img = new Image();
+  img.src = src;
+  return img;
+}
+
+// imgs source
+const assetsPath = "./assets/pixel_art/";
+const characterIdle = newImage(assetsPath + "/1 Fisherman/Fisherman_idle.png");
+const characterWalk = newImage(assetsPath + "/1 Fisherman/Fisherman_walk.png");
+const characterAttack = newImage(
+  assetsPath + "/1 Fisherman/Fisherman_attack.png"
+);
+const characterDeath = newImage(
+  assetsPath + "/1 Fisherman/Fisherman_death.png"
+);
+const characterHurt = newImage(assetsPath + "/1 Fisherman/Fisherman_hurt.png");
+const characterFishing = newImage(
+  assetsPath + "/1 Fisherman/Fisherman_fish.png"
+);
+const characterRow = newImage(assetsPath + "/1 Fisherman/Fisherman_row.png");
+const characterHook = newImage(assetsPath + "/1 Fisherman/Fisherman_hook.png");
+const Boat = newImage(assetsPath + "/3 Objects/Boat.png");
+const FishingDock = newImage(assetsPath + "/3 Objects/Fishing_hut.png");
+const watersheet = newImage(assetsPath + "/3 Objects/Water.png");
+const piersheet = newImage(assetsPath + "/3 Objects/Pier_Tiles.png");
+const grass1 = newImage(assetsPath + "/3 Objects/Grass1.png");
+const grass2 = newImage(assetsPath + "/3 Objects/Grass2.png");
+const grass3 = newImage(assetsPath + "/3 Objects/Grass3.png");
+const grass4 = newImage(assetsPath + "/3 Objects/Grass4.png");
+const fishbarrel1 = newImage(assetsPath + "/3 Objects/Fishbarrel1.png");
+const fishbarrel2 = newImage(assetsPath + "/3 Objects/Fishbarrel2.png");
+const fishbarrel3 = newImage(assetsPath + "/3 Objects/Fishbarrel3.png");
+const fishbarrel4 = newImage(assetsPath + "/3 Objects/Fishbarrel4.png");
+const fishbarrel5 = newImage(assetsPath + "/4 Icons/Icons_16.png");
+const fishbarrel6 = newImage(assetsPath + "/4 Icons/Icons_19.png");
+const woodbarrel = newImage(assetsPath + "/4 Icons/Icons_20.png");
+const metalbarrel = newImage(assetsPath + "/4 Icons/Icons_17.png");
+const boatVertical = newImage(assetsPath + "/3 Objects/Boat2.png");
+const fence = newImage(assetsPath + "/3 Objects/Stay.png");
+
+// Create random map
+const map = Array.from({ length: 50 }, () =>
+  Array.from({ length: 50 }, () => Math.floor(Math.random() * 3))
+);
+
+// Function to draw the map tiles
+function drawMap() {
+  for (let y = 0; y < mapHeight; y++) {
+    for (let x = 0; x < mapWidth; x++) {
+      const tileIndex = map[y][x];
+      let tileImage;
+      let tileX = 0;
+      let tileY = 0;
+
+      // Handle different tilesheets based on valid tile index range
+      if (tileIndex >= 0 && tileIndex <= 8) {
+        tileImage = watersheet;
+        tileX = (tileIndex % 3) * tileSize;
+        tileY = Math.floor(tileIndex / 3) * tileSize;
+      }
+
+      // Draw the tile if we have a valid tile image
+      if (tileImage) {
+        ctx.drawImage(
+          tileImage,
+          tileX,
+          tileY,
+          tileSize,
+          tileSize,
+          x * tileSize - camera.x,
+          y * tileSize - camera.y,
+          tileSize,
+          tileSize
+        );
+      } else {
+        console.error(`Invalid tile at position (${x}, ${y}): ${tileIndex}`);
+      }
+    }
+  }
+  for (let i = 0; i < 16; i++) {
+    ctx.drawImage(
+      piersheet,
+      0 - camera.x,
+      0 - camera.y,
+      2 * tileSize,
+      2 * tileSize,
+      tileSize * i,
+      200,
+      2 * tileSize,
+      2 * tileSize
+    );
+  }
+  drawObject(boat);
+  drawObject(dock);
+}
+
+function drawObject(object) {
+  ctx.drawImage(
+    object.image,
+    object.x - camera.x,
+    object.y - camera.y,
+    object.width,
+    object.height
+  );
+}
+
+// Keyboard input tracking
+let keys = {};
+document.addEventListener("keydown", (event) => {
+  keys[event.key] = true;
+  if (event.key === "f") {
+    characterMovementLocked = !characterMovementLocked;
+    characterAction = characterMovementLocked ? "fishing" : "idle";
+  }
+});
+document.addEventListener("keyup", (event) => {
+  keys[event.key] = false;
+});
 
 // Function to update the current frame for animation
 function updateFrame() {
   frameCounter++;
   if (frameCounter >= frameSpeed) {
     frameCounter = 0;
-    currentFrame = (currentFrame + 1) % getFrameCount(characterAction); 
+    currentFrame = (currentFrame + 1) % getFrameCount(characterAction);
   }
 }
 
 // Function to get the number of frames for a given action
 function getFrameCount(action) {
-  switch(action) {
-    case 'attack':
-      return 6;
-    case 'fishing':
-      return 4;
-    case 'death':
-      return 6;
-    case 'walk':
-      return 6; 
-    case 'hurt':
-      return 2; 
-    case 'row':
-      return 4;
-    case 'idle':
-      return 4; 
-    default:
-      return 4; 
+  if (action === "hurt") {
+    return 2;
   }
+  if (["attack", "death", "walk"].includes(action)) {
+    return 6;
+  }
+  return 4;
 }
 
-// Function to move the character or boat
+// Function to move the character or
 function moveCharacter() {
-  if (isFishing || characterMovementLocked) {
-    return; 
+  if (characterMovementLocked) {
+    return;
   }
-
-  if (isOnBoat) {
-    // Rowing boat logic
-    if (keys['w']) { boat.y -= boat.speed; isRowing = true; characterAction = 'row'; }
-    if (keys['s']) { boat.y += boat.speed; isRowing = true; characterAction = 'row'; }
-    if (keys['a']) { boat.x -= boat.speed; isRowing = true; characterAction = 'row'; }
-    if (keys['d']) { boat.x += boat.speed; isRowing = true; characterAction = 'row'; }
-    if (!keys['w'] && !keys['s'] && !keys['a'] && !keys['d']) { isRowing = false; characterAction = 'idle'; }
-  } else {
-    // Walking character logic
-    if (keys['w']) { character.y -= character.speed; characterAction = 'walk'; }
-    if (keys['s']) { character.y += character.speed; characterAction = 'walk'; }
-    if (keys['a']) { 
-      character.x -= character.speed; 
-      characterAction = 'walk'; 
-      characterFacingDirection = -1; 
-    }
-    if (keys['d']) { 
-      character.x += character.speed; 
-      characterAction = 'walk'; 
-      characterFacingDirection = 1; 
-    }
-    if (!keys['w'] && !keys['s'] && !keys['a'] && !keys['d']) { characterAction = 'idle'; }
+  if (!keys["w"] && !keys["s"] && !keys["a"] && !keys["d"]) {
+    characterAction = "idle";
+    return;
   }
-}
-
-// Function to toggle fishing action when pressing 'f'
-function toggleFishing() {
-  if (keys['f'] && !fishingKeyPressed) {
-    fishingKeyPressed = true;  
-
-    // Toggle the fishing state
-    isFishing = !isFishing;
-    characterMovementLocked = isFishing;  
-    characterAction = isFishing ? 'fishing' : 'idle'; 
+  // Walking character logic
+  characterAction = "walk";
+  if (keys["w"]) {
+    character.y -= character.speed;
   }
-}
-
-// Reset the flag when the 'f' key is released
-document.addEventListener('keyup', (event) => {
-  if (event.key === 'f') {
-    fishingKeyPressed = false; 
+  if (keys["s"]) {
+    character.y += character.speed;
   }
-});
-
-// Function to check if the character is near the boat to climb
-function checkClimbBoat() {
-  if (!isOnBoat && character.x < boat.x + boat.width && character.x + character.width > boat.x &&
-      character.y < boat.y + boat.height && character.y + character.height > boat.y) {
-    if (keys['e']) {
-      isOnBoat = true;
-      character.x = boat.x;
-      character.y = boat.y;
-      characterAction = 'row';
-    }
-  } else if (isOnBoat && keys['e']) {
-    isOnBoat = false;
-    character.x = boat.x + boat.width / 2;
-    character.y = boat.y + boat.height / 2;
-    characterAction = 'idle';
+  if (keys["a"]) {
+    character.x -= character.speed;
+    characterFacingDirection = -1;
+  }
+  if (keys["d"]) {
+    character.x += character.speed;
+    characterFacingDirection = 1;
   }
 }
 
 // Function to get the correct character image based on the action
 function getCharacterImage(action) {
   switch (action) {
-    case 'idle':
+    case "idle":
       return characterIdle;
-    case 'walk':
+    case "walk":
       return characterWalk;
-    case 'attack':
+    case "attack":
       return characterAttack;
-    case 'death':
+    case "death":
       return characterDeath;
-    case 'hurt':
+    case "hurt":
       return characterHurt;
-    case 'fishing':
+    case "fishing":
       return characterFishing;
-    case 'row':
+    case "row":
       return characterRow;
     default:
       return characterIdle;
@@ -228,46 +252,56 @@ function drawCharacter() {
   const frameHeight = 48;
   const currentFrameX = currentFrame * frameWidth;
 
-  // Set the direction based on the horizontal movement 
+  // Set the direction based on the horizontal movement
   let scaleX = characterFacingDirection;
 
   // Set the x position of the character based on the scaleX (flipping)
   let drawX = character.x;
-  if (scaleX === -1) { 
-    drawX = character.x + character.width; 
+  if (scaleX === -1) {
+    drawX = character.x + character.width;
   }
 
   // Draw the character
   ctx.save();
   ctx.scale(scaleX, 1);
-  ctx.drawImage(getCharacterImage(characterAction), currentFrameX, 0, frameWidth, frameHeight, drawX * (scaleX === -1 ? -1 : 1), character.y, character.width, character.height);
-  ctx.restore(); 
+  ctx.drawImage(
+    getCharacterImage(characterAction),
+    currentFrameX,
+    0,
+    frameWidth,
+    frameHeight,
+    (drawX - camera.x) * (scaleX === -1 ? -1 : 1),
+    character.y - camera.y,
+    character.width,
+    character.height
+  );
+  ctx.restore();
 }
 
-// Function to draw objects
-function drawObjects() {
-  ctx.drawImage(boat.image, boat.x, boat.y, boat.width, boat.height);
-  ctx.drawImage(dock.image, dock.x, dock.y, dock.width, dock.height);
-}
+// Camera follow logic: Update camera position based on the character position
+function updateCamera() {
+  camera.x = character.x + character.width / 2 - camera.width / 2;
+  camera.y = character.y + character.height / 2 - camera.height / 2;
 
-// Function to draw the ocean scene
-function drawOceanScene() {
-  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-  gradient.addColorStop(0, '#003366');
-  gradient.addColorStop(1, '#3399ff');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Prevent the camera from going out of bounds
+  camera.x = Math.max(
+    0,
+    Math.min(camera.x, mapWidth * tileSize - camera.width)
+  );
+  camera.y = Math.max(
+    0,
+    Math.min(camera.y, mapHeight * tileSize - camera.height)
+  );
 }
 
 // The main game loop function
 function gameLoop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawOceanScene();
-  checkClimbBoat();
+  updateCamera(); // Update camera position based on the character
+  drawMap();
+  drawCharacter();
   moveCharacter();
-  toggleFishing();  
-  updateFrame();  
-  drawObjects();
-  drawCharacter(); 
+  updateFrame();
   requestAnimationFrame(gameLoop);
 }
+
+gameLoop();
