@@ -196,31 +196,56 @@ function getFrameCount(action) {
   }
   return 4;
 }
+document.addEventListener("keydown", (event) => {
+    console.log("📝 Key Pressed:", event.key); // נבדוק אם בכלל מזהה לחיצה
+    keys[event.key] = true;
+
+    if (["w", "a", "s", "d"].includes(event.key)) {
+        moveCharacter();
+    }
+    if (event.key === "f") {
+        console.log("🐟 Sending fish catch request to server...");
+        gameClient.catchFish();
+    }
+    if (event.key === "e") {
+        console.log("🛶 Trying to enter/exit boat...");
+        toggleBoat();
+    }
+});
+
+document.addEventListener("keyup", (event) => {
+    keys[event.key] = false;
+});
 
 // Function to move the character or
 function moveCharacter() {
   if (characterMovementLocked) {
     return;
   }
+
+  let prevX = character.x;
+  let prevY = character.y;
+
   if (!keys["w"] && !keys["s"] && !keys["a"] && !keys["d"]) {
     characterAction = "idle";
-    return;
+  } else {
+    characterAction = "walk";
+
+    if (keys["w"]) character.y -= character.speed;
+    if (keys["s"]) character.y += character.speed;
+    if (keys["a"]) {
+      character.x -= character.speed;
+      characterFacingDirection = -1;
+    }
+    if (keys["d"]) {
+      character.x += character.speed;
+      characterFacingDirection = 1;
+    }
   }
-  // Walking character logic
-  characterAction = "walk";
-  if (keys["w"]) {
-    character.y -= character.speed;
-  }
-  if (keys["s"]) {
-    character.y += character.speed;
-  }
-  if (keys["a"]) {
-    character.x -= character.speed;
-    characterFacingDirection = -1;
-  }
-  if (keys["d"]) {
-    character.x += character.speed;
-    characterFacingDirection = 1;
+
+  // אם השחקן באמת זז (המיקום השתנה) נשלח עדכון לשרת
+  if (character.x !== prevX || character.y !== prevY) {
+    gameClient.updatePlayerPosition(character.x, character.y);
   }
 }
 

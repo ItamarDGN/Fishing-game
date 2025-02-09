@@ -1,0 +1,52 @@
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let character = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    width: 48,
+    height: 48,
+    speed: 5,
+    action: "idle",
+    facing: 1,
+    movementLocked: false
+};
+
+// מעקב אחרי מקשים
+const keys = {};
+document.addEventListener("keydown", (event) => keys[event.key] = true);
+document.addEventListener("keyup", (event) => keys[event.key] = false);
+
+function moveCharacter() {
+    if (character.movementLocked) return;
+
+    let prevX = character.x;
+    let prevY = character.y;
+
+    if (keys["w"]) character.y -= character.speed;
+    if (keys["s"]) character.y += character.speed;
+    if (keys["a"]) { character.x -= character.speed; character.facing = -1; }
+    if (keys["d"]) { character.x += character.speed; character.facing = 1; }
+
+    if (character.x !== prevX || character.y !== prevY) {
+        gameClient.updatePlayerPosition(character.x, character.y);
+    }
+}
+
+// וידוא שהתזוזה מופעלת כמו שצריך
+document.addEventListener("keydown", (event) => {
+    if (["w", "a", "s", "d"].includes(event.key)) {
+        moveCharacter();
+    }
+    if (event.key === "f") {
+        gameClient.catchFish();
+    }
+});
+
+// לולאת המשחק - ממשיכה לפעול כל הזמן
+function gameLoop() {
+    moveCharacter();
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();

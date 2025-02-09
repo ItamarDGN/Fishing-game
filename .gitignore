@@ -1,0 +1,91 @@
+# Visual Studio specific
+.vscode/
+.vs/
+*.code-workspace
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build output
+bin/
+obj/
+*.cache
+*.ilk
+*.log
+*.tlog
+*.pdb
+*.ipch
+*.aps
+*.ncb
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+*.rsp
+
+# Boost build files
+boost-build/
+boost/bin.v2/
+boost/stage/
+boost/libs/*/build/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+CTestTestfile.cmake
+cmake_install.cmake
+CMakeLists.txt.user
+
+# Package management
+packages/
+node_modules/
+*.nupkg
+*.snupkg
+*.swp
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Ignore compiled DLLs
+*.dll
+*.exe
+*.lib
+*.so
+*.dylib
+
+# Ignore generated files
+*.generated.cs
+GeneratedFiles/
+Debug/
+Release/
+x64/
+x86/
+
+# Ignore local configuration
+*.local
+*.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ignore logs and databases
+*.log
+*.sqlite
+*.sqlite3
+
+# Ignore JetBrains Rider files
+.idea/
+*.sln.iml
+
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore Web related files
+node_modules/
+dist/
+bower_components/
