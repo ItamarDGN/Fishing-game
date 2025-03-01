@@ -26,7 +26,7 @@ const characterRow = newImage(assetsPath + "/1 Fisherman/Fisherman_row.png");
 const characterHook = newImage(assetsPath + "/1 Fisherman/Fisherman_hook.png");
 const Boat = newImage(assetsPath + "/3 Objects/Boat.png");
 const FishingDock = newImage(assetsPath + "/3 Objects/Fishing_hut.png");
-const watersheet = newImage(assetsPath + "/3 Objects/Water.png");
+const watersheet = newImage(assetsPath + "/2d_tiles/waterblock32.png");
 const piersheet = newImage(assetsPath + "/3 Objects/Pier_Tiles.png");
 const grass1 = newImage(assetsPath + "/3 Objects/Grass1.png");
 const grass2 = newImage(assetsPath + "/3 Objects/Grass2.png");
@@ -41,7 +41,10 @@ const fishbarrel6 = newImage(assetsPath + "/4 Icons/Icons_19.png");
 const woodbarrel = newImage(assetsPath + "/4 Icons/Icons_20.png");
 const metalbarrel = newImage(assetsPath + "/4 Icons/Icons_17.png");
 const boatVertical = newImage(assetsPath + "/3 Objects/Boat2.png");
-const fence = newImage(assetsPath + "/3 Objects/Stay.png");
+const fence = newImage(assetsPath + "/2_tiles/dock_fence.png");
+const docktile = newImage(assetsPath + "/2d_tiles/dock_tile.png");
+const dockspawn = newImage(assetsPath + "/2d_tiles/dock_new.png");
+const islandtiles = newImage(assetsPath + "/2d_tiles/island_tiles.png");
 
 // Game state variables
 let isOnBoat = false;
@@ -62,17 +65,26 @@ const mapHeight = 50;
 
 // Boat definition
 let boat = {
-  x: 30,
-  y: canvas.height / 1.2,
-  width: 100,
-  height: 35,
+  x: 430,
+  y: canvas.height / 1.85,
+  width: 80,
+  height: 25,
   image: Boat,
+};
+
+// island definition
+let island = {
+  x: canvas.width - 530,
+  y: canvas.height / 2,
+  width: 64,
+  height: 64,
+  image: islandtiles,
 };
 
 // Dock definition
 let dock = {
-  x: canvas.width - 185,
-  y: canvas.height / 1.32,
+  x: canvas.width - 475,
+  y: canvas.height / 2.4,
   width: 150 * 1.2,
   height: 100 * 1.2,
   image: FishingDock,
@@ -100,7 +112,7 @@ const camera = {
 
 // Create random map
 const map = Array.from({ length: 50 }, () =>
-  Array.from({ length: 50 }, () => Math.floor(Math.random() * 3))
+  Array.from({ length: 50 }, () => Math.floor(Math.random() * 0))
 );
 
 // Function to draw the map tiles
@@ -137,19 +149,21 @@ function drawMap() {
       }
     }
   }
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 50; i++) {
     ctx.drawImage(
-      piersheet,
-      0 - camera.x,
-      0 - camera.y,
+      docktile,
+      0,
+      0,
       2 * tileSize,
-      2 * tileSize,
-      tileSize * i,
-      200,
+      3.5 * tileSize,
+      tileSize * i - camera.x,
+      443 - camera.y,
       2 * tileSize,
       2 * tileSize
     );
   }
+
+  drawObject(island);
   drawObject(boat);
   drawObject(dock);
 }
@@ -167,6 +181,7 @@ function drawObject(object) {
 // Keyboard input tracking
 let keys = {};
 document.addEventListener("keydown", (event) => {
+  const key = event.key.toLowerCase();
   keys[event.key] = true;
   if (event.key === "f") {
     characterMovementLocked = !characterMovementLocked;
@@ -174,6 +189,7 @@ document.addEventListener("keydown", (event) => {
   }
 });
 document.addEventListener("keyup", (event) => {
+  const key = event.key.toLowerCase();
   keys[event.key] = false;
 });
 
@@ -196,56 +212,31 @@ function getFrameCount(action) {
   }
   return 4;
 }
-document.addEventListener("keydown", (event) => {
-    console.log("📝 Key Pressed:", event.key); // נבדוק אם בכלל מזהה לחיצה
-    keys[event.key] = true;
-
-    if (["w", "a", "s", "d"].includes(event.key)) {
-        moveCharacter();
-    }
-    if (event.key === "f") {
-        console.log("🐟 Sending fish catch request to server...");
-        gameClient.catchFish();
-    }
-    if (event.key === "e") {
-        console.log("🛶 Trying to enter/exit boat...");
-        toggleBoat();
-    }
-});
-
-document.addEventListener("keyup", (event) => {
-    keys[event.key] = false;
-});
 
 // Function to move the character or
 function moveCharacter() {
   if (characterMovementLocked) {
     return;
   }
-
-  let prevX = character.x;
-  let prevY = character.y;
-
   if (!keys["w"] && !keys["s"] && !keys["a"] && !keys["d"]) {
     characterAction = "idle";
-  } else {
-    characterAction = "walk";
-
-    if (keys["w"]) character.y -= character.speed;
-    if (keys["s"]) character.y += character.speed;
-    if (keys["a"]) {
-      character.x -= character.speed;
-      characterFacingDirection = -1;
-    }
-    if (keys["d"]) {
-      character.x += character.speed;
-      characterFacingDirection = 1;
-    }
+    return;
   }
-
-  // אם השחקן באמת זז (המיקום השתנה) נשלח עדכון לשרת
-  if (character.x !== prevX || character.y !== prevY) {
-    gameClient.updatePlayerPosition(character.x, character.y);
+  // Walking character logic
+  characterAction = "walk";
+  if (keys["w"] && character.y > 0) {
+    character.y -= character.speed;
+  }
+  if (keys["s"] && character.y < 1550) {
+    character.y += character.speed;
+  }
+  if (keys["a"] && character.x > 0) {
+    character.x -= character.speed;
+    characterFacingDirection = -1;
+  }
+  if (keys["d"] && character.x < 1570) {
+    character.x += character.speed;
+    characterFacingDirection = 1;
   }
 }
 
